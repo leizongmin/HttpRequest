@@ -13,6 +13,9 @@ var net = require('net'),
 	
 var debug = function (x) { console.log(x); }
 
+/** 超时时间 */
+$.timeout = 60000;
+
 /**
  * 连接指定主机，发送并接收数据
  *
@@ -47,7 +50,7 @@ $.send = function (host, port, reqdata, callback) {
 		if (had_error)
 			callback('close');
 	});
-	client.setTimeout(10000);
+	client.setTimeout($.timeout);
 	client.connect(port, host);
 	// debug(reqdata);
 }
@@ -217,3 +220,4 @@ $.post = function (requrl, params, callback, headers) {
 exports.request = $.request;
 exports.get = $.get;
 exports.post = $.post;
+exports.timeout = $.timeout;

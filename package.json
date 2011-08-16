@@ -1,0 +1,17 @@
+{
+  "author": "leizongmin <leizongmin@gmail.com> (http://lab.ucdok.com)",
+  "name": "HttpRequest",
+  "description": "HttpRequest Module",
+  "version": "0.1.0",
+  "homepage": "http://lab.ucdok.com/HttpRequest",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:leizongmin/HttpRequest.git"
+  },
+  "engines": {
+    "node": ">= 0.4.7"
+  },
+  "dependencies": {},
+  "main": "HttpRequest.js",
+  "devDependencies": {}
+}
