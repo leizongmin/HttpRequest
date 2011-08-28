@@ -28,7 +28,7 @@ $.send = function (host, port, reqdata, callback) {
 	var client = new net.Socket();
 	var data = new Buffer('');
 	client.on('connect', function () {
-		client.end(reqdata);
+		client.write(reqdata); // 解决SAE返回空结果问题 2011-08-28 10:57:29
 	});
 	client.on('data', function (chunk) {
 		data += chunk;
