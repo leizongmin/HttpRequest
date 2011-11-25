@@ -30,7 +30,7 @@ $.send = function (host, port, reqdata, callback) {
 	var data = [];
 	var length = 0;
 	client.on('connect', function () {
-		client.end(reqdata);
+		client.write(reqdata); // 解决SAE返回空结果问题 2011-08-28 10:57:29
 	});
 	client.on('data', function (chunk) {
 		data.push(chunk);
