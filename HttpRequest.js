@@ -2,7 +2,8 @@
  * HttpRequest
  *
  * @author leizongmin<leizongmin@gmail.com>
- * @version 0.1
+ * @version 0.2
+ * @date 2011-11-25 15:55:59
  */
  
 var $ = {};
@@ -26,16 +27,24 @@ $.timeout = 60000;
  */
 $.send = function (host, port, reqdata, callback) {
 	var client = new net.Socket();
-	var data = new Buffer('');
+	var data = [];
+	var length = 0;
 	client.on('connect', function () {
 		client.end(reqdata);
 	});
 	client.on('data', function (chunk) {
-		data += chunk;
+		data.push(chunk);
+		length += chunk.length;
 	});
 	client.on('end', function () {
 		client.destroy();
-		callback(undefined, data);
+		var ret = new Buffer(length);
+		var offset = 0;
+		for (var i = 0, chunk; chunk = data[i]; i++) {
+			chunk.copy(ret, offset, 0, chunk.length);
+			offset += chunk.length;
+		}
+		callback(undefined, ret);
 	});
 	client.on('timeout', function () {
 		client.destroy();
@@ -100,10 +109,19 @@ $.request = function (requrl, params, callback, method, headers) {
 			return;
 		}
 		
-		var data = data.toString();
-		var pos = data.indexOf('\r\n\r\n');
-		var body = data.substr(pos + 4);
-		var header = data.substr(0, pos).split('\r\n');
+		var length = data.length;
+		for (var i = 0; i < length; i++) {
+			if (data[i] == 13 && data[i + 1] == 10 && data[i + 2] == 13 && data[i + 3] == 10) {
+				var header = data.slice(0, i);
+				var body = data.slice(i + 4);
+				break;
+			}
+		}
+		if (typeof header == 'undefined' && typeof body == 'undefined') {
+			callback(Error('Response error'));
+			return;
+		}
+		header = header.toString();
 		
 		// 解析HTTP头
 		// debug(header);
@@ -118,7 +136,7 @@ $.request = function (requrl, params, callback, method, headers) {
 		var status = header[0].split(' ');
 		var statusCode = parseInt(status[1]);
 		if (statusCode < 200 || statusCode > 299) {
-			callback(statusCode, body, headers);
+			callback(Error('status code: ' + statusCode), body, headers);
 			return;
 		}
 		// debug(status);
