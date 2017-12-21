@@ -1,4 +1,6 @@
 ##Quick Start##
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/leizongmin/HttpRequest.svg)](https://greenkeeper.io/)
 ```javascript
 var HttpRequest = require('HttpRequest');
 
